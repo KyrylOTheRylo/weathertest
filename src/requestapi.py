@@ -1,7 +1,7 @@
 import requests
 
 
-def getweatherbycity(city: str = "Kiev", days: int = 3, url: str ="", headers: dict ={}):
+def getweatherbycity(city: str = "Kiev", days: int = 3, url: str = "", headers: dict = {}):
     """
 
     :param city: you can write the city you want to check
@@ -24,8 +24,8 @@ def get_exact_weather(info):
     result = []
     place = info["location"]["name"]
     for x in info["forecast"]["forecastday"]:
-        tmp = {"city": place,
-               "date": x["date"],
+        tmp = {"_id": {"city": place,
+                       "date": x["date"]},
                "min_temp": x["day"]["mintemp_c"],
                "avg_temp": x["day"]["avgtemp_c"],
                "max_temp": x["day"]["maxtemp_c"],

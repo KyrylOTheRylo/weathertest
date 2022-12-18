@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - '27017:27017'
+    volumes:
+      - ~/mongo:/data/db
+      - ./mongo:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=citizix
+      - MONGO_INITDB_ROOT_PASSWORD=S3cret
+  back:
+    build: ./src/main
+    depends_on:
+      - mongodb
+      - rdb
+      - rabbitmq
+    command: "python ./main.py"
+  rdb:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - cache:/data
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
+volumes:
+  cache:
+    driver: local
+networks:
+  rabbitmq_go_net:
+    driver: bridge

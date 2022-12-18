@@ -22,3 +22,10 @@ def open_collection(db: Database, collection_name) -> Collection:
 def insert(collection: Collection, dict1):
     if collection.find_one({"_id": dict1["_id"]}) is None:
         collection.insert_one(dict1)
+    else:
+        collection.update_one({"_id": dict1["_id"]}, {"$set": dict1})
+
+
+def insert_many(collection: Collection, list1):
+    for x in list1:
+        insert(collection, x)
